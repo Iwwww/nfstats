@@ -101,6 +101,8 @@ LOGGING = {
     },
 }
 
+VARS = {}
+
 ROOT_URLCONF = "nfstats.urls"
 
 TEMPLATE_DIR = BASE_DIR.joinpath("templates")

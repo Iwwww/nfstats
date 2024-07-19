@@ -14,6 +14,8 @@ services:
       - /var/flows/:/var/flows/:ro
     env_file:
       - .env
+    environment:
+      - TZ=Europe/Moscow
     expose:
       - 8000
     depends_on:
@@ -28,6 +30,7 @@ services:
       - POSTGRES_DB=${DB_NAME}
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - TZ=Europe/Moscow
     env_file:
       - .env
 

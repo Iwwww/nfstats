@@ -7,13 +7,16 @@ ENV PYTHONUNBUFFERED 1
 
 WORKDIR /usr/src/app
 
-RUN apt-get update && apt-get install -y gettext snmp nfdump
+RUN apt-get update && apt-get install -y gettext snmp nfdump cron
 
 RUN pip install --upgrade pip
 RUN pip install --upgrade setuptools
 COPY requirements.txt ./
 RUN pip install -r requirements.txt
 COPY . .
+
+COPY cron/interface_speed /etc/cron.d/interface_speed
+RUN crontab /etc/cron.d/interface_speed
 
 COPY ./init_db.py /usr/src/app/init_db.py
 COPY ./wait-for-it.sh /usr/src/app/wait-for-it.sh
@@ -22,4 +25,4 @@ RUN chmod +x /usr/src/app/wait-for-it.sh
 
 EXPOSE 8000
 
-CMD ["sh", "-c", "/usr/src/app/wait-for-it.sh db:5432 -- python manage.py migrate && python init_db.py && python manage.py collectstatic --noinput > /dev/null && gunicorn --bind 0.0.0.0:8000 nfstats.wsgi:application"]
+CMD ["sh", "-c", "/usr/src/app/wait-for-it.sh db:5432 -- python manage.py migrate && python init_db.py && python manage.py collectstatic --noinput > /dev/null && cron -n && gunicorn --bind 0.0.0.0:8000 nfstats.wsgi:application"]
